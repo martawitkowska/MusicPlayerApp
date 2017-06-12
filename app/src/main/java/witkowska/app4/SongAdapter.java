@@ -21,6 +21,8 @@ import java.util.List;
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> {
 
     private List<Song> songList;
+    private LayoutInflater song_inflater;
+    RelativeLayout relativeLayout;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title, year, artist;
@@ -35,8 +37,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> 
         }
     }
 
-    public SongAdapter(ArrayList<Song> songList) {
+    public SongAdapter(Context c, ArrayList<Song> songList) {
         this.songList = songList;
+        song_inflater = LayoutInflater.from(c);
     }
 
     @Override
@@ -45,8 +48,10 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_list_row, parent, false);
+        relativeLayout = (RelativeLayout) song_inflater.inflate(R.layout.song_list_row, parent, false);
         return new MyViewHolder(itemView);
     }
+
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
@@ -55,7 +60,10 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> 
         holder.artist.setText(song.getArtist());
         holder.year.setText(String.valueOf(song.getYear()));
 //        holder.picture.setImageResource(song.getPictureResource());
+
+        relativeLayout.setTag(position);
     }
+
 
     @Override
     public int getItemCount() {

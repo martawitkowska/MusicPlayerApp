@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 //        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 //        songView.setLayoutManager(layoutManager);
 
-        songAdapter = new SongAdapter(songList);
+        songAdapter = new SongAdapter(this, songList);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         songView.setLayoutManager(mLayoutManager);
         songView.setItemAnimator(new DefaultItemAnimator());
