@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -18,55 +19,45 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class SongAdapter extends RecyclerView.Adapter<SongAdapter.MyViewHolder> {
+public class SongAdapter extends BaseAdapter {
 
-    private List<Song> songList;
-    private LayoutInflater song_inflater;
-    RelativeLayout relativeLayout;
+    private ArrayList<Song> songs;
+    private LayoutInflater songInf;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, year, artist;
-        public ImageView picture;
 
-        public MyViewHolder(View view) {
-            super(view);
-            title = (TextView) view.findViewById(R.id.title);
-            artist = (TextView) view.findViewById(R.id.artist);
-            year = (TextView) view.findViewById(R.id.year);
-//            picture = (ImageView) view.findViewById(R.id.picture);
-        }
-    }
-
-    public SongAdapter(Context c, ArrayList<Song> songList) {
-        this.songList = songList;
-        song_inflater = LayoutInflater.from(c);
+    public SongAdapter(Context c, ArrayList<Song> songList){
+        songs = songList;
+        songInf = LayoutInflater.from(c);
     }
 
     @Override
-    public int getItemViewType(int position) { return 0; }
-
-    @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_list_row, parent, false);
-        relativeLayout = (RelativeLayout) song_inflater.inflate(R.layout.song_list_row, parent, false);
-        return new MyViewHolder(itemView);
+    public int getCount() {
+        return songs.size();
     }
 
-
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
-        Song song = songList.get(position);
-        holder.title.setText(song.getTitle());
-        holder.artist.setText(song.getArtist());
-        holder.year.setText(String.valueOf(song.getYear()));
-//        holder.picture.setImageResource(song.getPictureResource());
-
-        relativeLayout.setTag(position);
+    public Object getItem(int arg0) {
+        return null;
     }
 
-
     @Override
-    public int getItemCount() {
-        return songList.size();
+    public long getItemId(int arg0) {
+        return 0;
+    }
+
+    public View getView(int position, View convertView, ViewGroup parent) {
+        RelativeLayout songLay = (RelativeLayout) songInf.inflate (R.layout.song_list_row, parent, false);
+
+        TextView songView = (TextView)songLay.findViewById(R.id.title);
+        TextView artistView = (TextView)songLay.findViewById(R.id.artist);
+        TextView yearView = (TextView)songLay.findViewById(R.id.year);
+
+        Song currSong = songs.get(position);
+        songView.setText(currSong.getTitle());
+        artistView.setText(currSong.getArtist());
+        yearView.setText(String.valueOf(currSong.getYear()));
+
+        songLay.setTag(position);
+        return songLay;
     }
 }

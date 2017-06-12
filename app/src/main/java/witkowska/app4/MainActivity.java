@@ -8,6 +8,8 @@ import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.Serializable;
@@ -15,10 +17,12 @@ import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
+
 public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Song> songList;
-    private RecyclerView songView;
+    private ListView songView;
     private SongAdapter songAdapter;
 
 
@@ -30,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 
-        songView = (RecyclerView)findViewById(R.id.recycler_view);
+        songView = (ListView) findViewById(R.id.song_list);
         songList = new ArrayList<Song>();
 
 //        songAdapter = new SongAdapter(songList);
@@ -39,33 +43,26 @@ public class MainActivity extends AppCompatActivity {
 //        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 //        songView.setLayoutManager(layoutManager);
 
-        songAdapter = new SongAdapter(this, songList);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        songView.setLayoutManager(mLayoutManager);
-        songView.setItemAnimator(new DefaultItemAnimator());
-        songView.setAdapter(songAdapter);
-
         prepareSongs();
 
+        songAdapter = new SongAdapter(this, songList);
+        songView.setAdapter(songAdapter);
 
-        songView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), songView,
-                new RecyclerTouchListener.MyClickListener() {
-                    @Override
-                    public void onClick(View view, int position) {
-                        Song song = songList.get(position);
-//                        Toast.makeText(getApplicationContext(), song.getTitle(), Toast.LENGTH_SHORT).show();
-                        Intent songIntent = new Intent(getApplicationContext(), SongInfoActivity.class);
 
-                        Bundle song_data = new Bundle();
-                        song_data.putInt("Position", position);
-                        song_data.putSerializable("Songs", (Serializable)songList);
-                        songIntent.putExtra("Bundle", song_data);
-                        startActivityForResult(songIntent, 123);
-                    }
-                    @Override
-                    public void onLongClick(View view, int position) {}
-                }
-        ));
+        songView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Song song = songList.get(position);
+//                Toast.makeText(getApplicationContext(), song.getTitle(), Toast.LENGTH_SHORT).show();
+                Intent songIntent = new Intent(getApplicationContext(), SongInfoActivity.class);
+
+                Bundle song_data = new Bundle();
+                song_data.putInt("Position", position);
+                song_data.putSerializable("Songs", (Serializable)songList);
+                songIntent.putExtra("Bundle", song_data);
+                startActivityForResult(songIntent, 123);
+            }
+        });
     }
 
 
@@ -73,7 +70,10 @@ public class MainActivity extends AppCompatActivity {
         Song song = new Song(1, "The Coconut Song", "Smokey Mountain", 2010, R.drawable.coconut_song);
         songList.add(song);
 
-        songAdapter.notifyDataSetChanged();
+        song = new Song(2, "Bla bla bla", "Some artist", 2015, R.drawable.coconut_song);
+        songList.add(song);
+
+//        songAdapter.notifyDataSetChanged();
     }
 
 
