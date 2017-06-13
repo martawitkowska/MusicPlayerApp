@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import butterknife.ButterKnife;
  * Created by Administrator on 2017-06-09.
  */
 
-public class SongInfoActivity extends AppCompatActivity {
+public class SongInfoActivity extends AppCompatActivity implements MediaController.MediaPlayerControl {
 
     private ArrayList<Song> songList = new ArrayList<>();
     Song song;
@@ -58,9 +59,8 @@ public class SongInfoActivity extends AppCompatActivity {
     }
 
     public void playClick(View view) {
-        String tag = view.getTag().toString();
-        musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
-
+//        String tag = view.getTag().toString();
+        musicSrv.setSong(Integer.parseInt(String.valueOf(position)));
         musicSrv.playSong();
     }
 
@@ -99,15 +99,56 @@ public class SongInfoActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    @Override
+    public void start() {
 
-//    String fname=txtView.getText().toString().toLowerCase();
-//
-//    int resID=getResources().getIdentifier(fname, "raw", getPackageName());
-//
-//    MediaPlayer mediaPlayer=MediaPlayer.create(this,resID);
-//                    mediaPlayer.start();
+    }
 
+    @Override
+    public void pause() {
 
+    }
+
+    @Override
+    public int getDuration() {
+        return 0;
+    }
+
+    @Override
+    public int getCurrentPosition() {
+        return position;
+    }
+
+    @Override
+    public void seekTo(int pos) { }
+
+    @Override
+    public boolean isPlaying() {
+        return false;
+    }
+
+    @Override
+    public int getBufferPercentage() {
+        return 0;
+    }
+
+    @Override
+    public boolean canPause() {
+        return false;
+    }
+
+    @Override
+    public boolean canSeekBackward() {
+        return false;
+    }
+
+    @Override
+    public boolean canSeekForward() {
+        return false;
+    }
+
+    @Override
+    public int getAudioSessionId() { return 0; }
 
 
 }

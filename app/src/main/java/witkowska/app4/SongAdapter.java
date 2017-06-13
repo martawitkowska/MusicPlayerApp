@@ -57,7 +57,7 @@ public class SongAdapter extends BaseAdapter {
         artistView.setText(currSong.getArtist());
         yearView.setText(String.valueOf(currSong.getYear()));
 
-        songLay.setTag(position);
+        songLay.setTag(position); //setting song position as a tag, which will let us play the correct song
         return songLay;
     }
 }

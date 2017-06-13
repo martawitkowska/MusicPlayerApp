@@ -10,6 +10,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -56,22 +57,29 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     public void playSong() {
         player.reset(); //resetting the mediaplayer
+        player.release();
+        player = null;
+
         Song song = songList.get(song_position);
         int song_ID = song.getID();
-
-//        Uri track = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song_ID);
-//
-//        try{
-//            player.setDataSource(getApplicationContext(), track);
-//        } catch(Exception e){}
 
         String track_name = "song" + String.valueOf(song_ID);
         int resource_ID = getResources().getIdentifier(track_name, "raw", getPackageName());
         try{
             player = MediaPlayer.create(this, resource_ID);
-        } catch(Exception e){}
+//            player.prepareAsync(); //then onPrepare() method
+        } catch(Exception e){
+            Toast.makeText(this, "MP3 not found", Toast.LENGTH_SHORT).show();
+        }
 
-        player.prepareAsync(); //then onPrepare() method
+        //mp3 will be started after completion of preparing
+        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer player) {
+                player.start();
+            }
+
+        });
     }
 
 
@@ -107,7 +115,5 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     @Override
-    public void onPrepared(MediaPlayer mp) {
-        mp.start();
-    }
+    public void onPrepared(MediaPlayer mp) {}
 }
