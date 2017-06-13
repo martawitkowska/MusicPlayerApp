@@ -23,7 +23,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     private MediaPlayer player;
     private ArrayList<Song> songList;
-    private int song_position;
+    private int song_position, song_ID;
     private final IBinder musicBind = new MusicBinder(); //representing the inner class
 
 
@@ -31,8 +31,10 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void onCreate(){
         super.onCreate();
         song_position = 0;
+        song_ID = -1;
         player = new MediaPlayer();
 
+//        Toast.makeText(this, "onCreate() of the Music Service\nsong_ID = " + String.valueOf(song_ID), Toast.LENGTH_SHORT).show();
         initializeMusicPlayer();
     }
 
@@ -61,7 +63,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         player = null;
 
         Song song = songList.get(song_position);
-        int song_ID = song.getID();
+        song_ID = song.getID();
 
         String track_name = "song" + String.valueOf(song_ID);
         int resource_ID = getResources().getIdentifier(track_name, "raw", getPackageName());
@@ -105,9 +107,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     @Override
-    public void onCompletion(MediaPlayer mp) {
-
-    }
+    public void onCompletion(MediaPlayer mp) {}
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
@@ -116,4 +116,61 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public void onPrepared(MediaPlayer mp) {}
+
+
+    public void playNext(){
+        song_position++;
+        if(song_position == songList.size())
+            song_position = 0;
+        playSong();
+    }
+
+    public void playPrev(){
+        song_position--;
+        if(song_position == 0)
+            song_position = songList.size()-1;
+        playSong();
+    }
+
+    public int getPosn(){
+        return player.getCurrentPosition();
+    }
+
+    public int getDur(){
+        return player.getDuration();
+    }
+
+    public boolean isPng(){
+        return player.isPlaying();
+    }
+
+    public void pausePlayer(){
+        player.pause();
+    }
+
+    public void seek(int posn){
+        player.seekTo(posn);
+    }
+
+    public void go(){
+        if (song_ID < 0) {
+            player.reset(); //resetting the mediaplayer
+            player.release();
+            player = null;
+
+            Song song = songList.get(song_position);
+            song_ID = song.getID();
+
+            String track_name = "song" + String.valueOf(song_ID);
+            int resource_ID = getResources().getIdentifier(track_name, "raw", getPackageName());
+            try{
+                player = MediaPlayer.create(this, resource_ID);
+//            player.prepareAsync(); //then onPrepare() method
+            } catch(Exception e){
+                Toast.makeText(this, "MP3 not found", Toast.LENGTH_SHORT).show();
+            }
+        }
+        player.start();
+//        Toast.makeText(this, "go() from MusicService", Toast.LENGTH_SHORT).show();
+    }
 }
