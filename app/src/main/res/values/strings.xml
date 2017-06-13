@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Music Player</string>
+
+    <string name="button_text">Click if you want to return to the list of songs</string>
+    <string name="artist">Artist:</string>
+    <string name="year">Year:</string>
+
 </resources>

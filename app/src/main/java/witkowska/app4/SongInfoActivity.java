@@ -16,6 +16,7 @@ import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -59,8 +60,6 @@ public class SongInfoActivity extends AppCompatActivity implements MediaControll
         song_picture.setImageResource(song.getPictureResource());
 
         setController();
-//        controller.show(0);
-
     }
 
     @Override
@@ -68,19 +67,13 @@ public class SongInfoActivity extends AppCompatActivity implements MediaControll
         super.onWindowFocusChanged(hasFocus);
         if(controller != null)
             controller.show(0);
-//        Toast.makeText(this, "onWindowFocusChanged()", Toast.LENGTH_SHORT).show();
     }
 
-    public void playClick(View view) {
-        musicSrv.setSong(position);
-        musicSrv.playSong();
+
+    public void buttonOnClick(View view){
+        finish();
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        controller.show();
-        return false;
-    }
 
     /* Connection (Activity) with the Service
     *  If the connection with the bound is made, we pass the song list */
@@ -91,6 +84,7 @@ public class SongInfoActivity extends AppCompatActivity implements MediaControll
             MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
             musicSrv = binder.getService(); //get the service
             musicSrv.setSongList(songList); //pass list with songs
+            musicSrv.setSong(position); //pass the position of the song
             musicBound = true;
         }
 
@@ -105,23 +99,9 @@ public class SongInfoActivity extends AppCompatActivity implements MediaControll
         controller = new MusicController(SongInfoActivity.this);
         final ConstraintLayout songInfoView = (ConstraintLayout) findViewById(R.id.constraint_view);
 
-//        controller.setPrevNextListeners(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                playNext();
-//            }
-//        }, new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                playPrev();
-//            }
-//        });
-
         controller.setMediaPlayer(SongInfoActivity.this);
         controller.setAnchorView(songInfoView);
         controller.setEnabled(true);
-
-//        controller.show();
     }
 
 
@@ -148,7 +128,7 @@ public class SongInfoActivity extends AppCompatActivity implements MediaControll
     protected void onPause(){
         super.onPause();
         paused = true;
-     }
+    }
 
     @Override
     protected void onStop() {
@@ -159,26 +139,13 @@ public class SongInfoActivity extends AppCompatActivity implements MediaControll
     @Override
     protected void onDestroy() {
         stopService(playIntent);
-        musicSrv=null;
+        musicSrv = null;
         super.onDestroy();
     }
 
 
-    //play next
-    private void playNext(){
-        musicSrv.playNext();
-        controller.show(0);
-    }
-
-    //play previous
-    private void playPrev(){
-        musicSrv.playPrev();
-        controller.show(0);
-    }
-
     @Override
     public void start() {
-//        Toast.makeText(this, "start()", Toast.LENGTH_SHORT).show();
         musicSrv.go();
     }
 
@@ -189,23 +156,21 @@ public class SongInfoActivity extends AppCompatActivity implements MediaControll
 
     @Override
     public int getDuration() {
-        if(musicSrv != null && musicBound && musicSrv.isPng())
+        if(musicSrv != null && musicBound)
             return musicSrv.getDur();
         else return 0;
     }
 
     @Override
     public int getCurrentPosition() {
-//        Toast.makeText(this, "getCurrentPosition()", Toast.LENGTH_SHORT).show();
-        if(musicSrv != null && musicBound && musicSrv.isPng())
+        if(musicSrv != null && musicBound)
             return musicSrv.getPosn();
         else return 0;
     }
 
     @Override
-    public void seekTo(int pos) {
-        musicSrv.seek(pos);
-//        Toast.makeText(this, "seekTo()", Toast.LENGTH_SHORT).show();
+    public void seekTo(int position) {
+        musicSrv.seek(position);
     }
 
     @Override
